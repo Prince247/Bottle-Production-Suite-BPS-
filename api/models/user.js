@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   User.associate = function(models) {
+    User.hasMany(models.Refresh_Token, { 
+        foreignKey: 'id',
+        as:'user_ref_tok'
+    });
   };
   return User;
 };

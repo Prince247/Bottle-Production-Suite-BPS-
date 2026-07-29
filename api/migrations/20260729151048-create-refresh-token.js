@@ -1,0 +1,40 @@
+'use strict';
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('refresh_token', {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.literal('uuid_generate_v1mc()')
+      },
+      user_id: {
+        type: Sequelize.UUID
+      },
+      token: {
+        type: Sequelize.TEXT
+      },
+      expires_at: { 
+        type: Sequelize.DATE
+      },
+      created_by: {
+        type: Sequelize.UUID
+      },
+      updated_by: {
+        type: Sequelize.UUID
+      },
+      createdAt: {
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        type: Sequelize.DATE
+      },
+      deletedAt: {
+        type: Sequelize.DATE
+      }
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('refresh_token');
+  }
+};
