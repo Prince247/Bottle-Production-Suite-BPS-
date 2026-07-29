@@ -1,5 +1,5 @@
-// const user = require("./controller/");
-// const despatchorder = require("./controller/")
+const users = require("./controllers/users");
 
-// module.exports=  { 
-// }
+module.exports=  { 
+    users
+}

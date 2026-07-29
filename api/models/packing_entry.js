@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Packing_Entry.associate = function(models) {
-    Packing_Entry.belongsTo(models.DailyLog, { 
+    Packing_Entry.belongsTo(models.Daily_log, { 
         foreignKey: 'daily_log_id',
         as:'pack_ent_daily_log'
      });

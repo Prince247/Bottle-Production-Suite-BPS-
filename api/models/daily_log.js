@@ -7,19 +7,19 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Daily_log.associate = function(models) {
-    DailyLog.hasMany(models.PreformInward, { 
+    Daily_log.hasMany(models.Perform_Inward, { 
         foreignKey: 'id',
         as:'daily_perf' 
     });
-    DailyLog.hasMany(models.ProductionRun, { 
+    Daily_log.hasMany(models.Production_Run, { 
         foreignKey: 'id',
         as:'daily_prd_run'
      });
-    DailyLog.hasMany(models.PackingEntry, { 
+    Daily_log.hasMany(models.Packing_Entry, { 
         foreignKey: 'id',
         as:'daily_pack_ent'
      });
-    DailyLog.hasMany(models.Despatch, { 
+    Daily_log.hasMany(models.Despatch, { 
         foreignKey: 'id',
         as:'daily_despatch'
      });

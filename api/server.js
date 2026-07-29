@@ -13,7 +13,7 @@ app.use((req,res,next)=>{
 
 connectDB();
 
-// app.use("/api",route)
+app.use("/api",route)
 
 app.listen(port, ()=>{
     console.log(`Port Listening to ${port}`)

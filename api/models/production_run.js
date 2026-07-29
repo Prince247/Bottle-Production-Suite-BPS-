@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Production_Run.associate = function(models) {
-    Production_Run.belongsTo(models.DailyLog, { 
+    Production_Run.belongsTo(models.Daily_log, { 
         foreignKey: 'daily_log_id',
         as:'prd_run_daily_log'
      });

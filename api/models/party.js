@@ -2,17 +2,17 @@
 module.exports = (sequelize, DataTypes) => {
   const Party = sequelize.define('Party', {
     party_name: DataTypes.STRING,
-    payment: DataTypes.decimal(16, 9)
+    payment: DataTypes.DECIMAL(16, 9)
   }, {
     tableName: 'parties'
     , paranoid: true
   });
   Party.associate = function (models) {
-    Party.hasMany(models.ProductionRun, {
+    Party.hasMany(models.Production_Run, {
       foreignKey: 'id',
       as: 'part_prd_run'
     });
-    Party.hasMany(models.PackingEntry, {
+    Party.hasMany(models.Packing_Entry, {
       foreignKey: 'id',
       as: 'part_pack_ent'
     });
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id',
       as: 'part_desp'
     });
-    Party.hasMany(models.PreformInward, {
+    Party.hasMany(models.Perform_Inward, {
       foreignKey: 'id',
       as: 'part_perform'
     });

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Machine.associate = function(models) {
-    Machine.hasMany(models.ProductionRun, { 
+    Machine.hasMany(models.Production_Run, { 
         foreignKey: 'id',
         as:'mach_prd_run'
     });

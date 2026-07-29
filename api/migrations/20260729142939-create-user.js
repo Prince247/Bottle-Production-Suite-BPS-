@@ -1,18 +1,21 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('parties', {
+    await queryInterface.createTable('users', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal('uuid_generate_v1mc()')
       },
-      party_name: {
+      name: {
         type: Sequelize.STRING
       },
-      payment: {
-        type: Sequelize.DECIMAL(16,9)
+      email: {
+        type: Sequelize.STRING
+      },
+      password: { 
+        type: Sequelize.STRING
       },
       created_by: {
         type: Sequelize.UUID
@@ -32,6 +35,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('parties');
+    await queryInterface.dropTable('users');
   }
 };

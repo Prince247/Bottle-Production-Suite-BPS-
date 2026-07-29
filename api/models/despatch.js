@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Despatch.associate = function(models) {
-    Despatch.belongsTo(models.DailyLog, { 
+    Despatch.belongsTo(models.Daily_log, { 
         foreignKey: 'daily_log_id',
         as:'despatch_daily_log'
      });

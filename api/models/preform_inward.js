@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       , paranoid: true
   });
   Perform_Inward.associate = function(models) {
-    PreformInward.belongsTo(models.DailyLog, { 
+    Perform_Inward.belongsTo(models.Daily_log, { 
         foreignKey: 'daily_log_id',
         as:'perf_daily_log'
      });
-    PreformInward.belongsTo(models.Party, { 
+    Perform_Inward.belongsTo(models.Party, { 
         foreignKey: 'party_id',
         as:'perf_party'
      });
