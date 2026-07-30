@@ -10,6 +10,9 @@ route.post("/refresh-token",users.refreshJwtToken);
 
 const parties = allController.parties
 route.get('/parties',parties.listParties);
+route.get('/parties/:id',parties.getPartiesById);
 route.post('/parties',parties.createParties);
+route.put('/parties/:id',parties.updateParties);
+route.delete('/parties/:id',parties.deleteParties);
 
 module.exports = route;
