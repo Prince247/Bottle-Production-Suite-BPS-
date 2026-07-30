@@ -8,4 +8,8 @@ route.post("/signup",users.createUser);
 route.post("/login",users.getUser);
 route.post("/refresh-token",users.refreshJwtToken);
 
+const parties = allController.parties
+route.get('/parties',parties.listParties);
+route.post('/parties',parties.createParties);
+
 module.exports = route;
