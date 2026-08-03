@@ -1,0 +1,134 @@
+Clear Answer
+👉 NO — we NEVER put lock inside:
+create()
+update()
+bulkCreate()
+bulkUpdate()
+.save()
+
+👉 Only in findOne() / findAll() BEFORE create/update/delete - Lock the data I read so no one else changes it before I write
+🔒 IMPORTANT: to update the table in race condition thing You need to FIRST fetch it WITH LOCK
+✅ EXACT RULE
+All decision-making table u have to lock & findone before fetch the table u update 
+
+try {
+  // 🔒 Lock ALL decision-making tables
+  const dispatch = await Dispatch.findOne({
+    where: { id },
+    transaction: txn,
+    lock: txn.LOCK.UPDATE
+  });
+
+  const receipt = await Receipt.findAll({
+    where: { ref_id: id },
+    transaction: txn,
+    lock: txn.LOCK.UPDATE
+  });
+
+  // 🔒 Lock UPDATE table (BinSlot)
+  const bins = await BinSlot.findAll({
+    where: { item_id: dispatch.item_id },
+    transaction: txn,
+    lock: txn.LOCK.UPDATE
+  });
+
+  // ✏️ Safe update
+  for (const bin of bins) {
+    bin.qty -= dispatch.qty;
+    await bin.save({ transaction: txn });
+  }
+
+  await txn.commit();
+} catch (e) {
+  await txn.rollback();
+}
+
+------------------------------------------------------------------------------------
+👉 Try Catch used to  - handle runtime errors without crashing the program
+Without Try Catch
+function test() {
+  let data = JSON.parse("invalid json"); // ❌ error
+  console.log("after parse");
+}
+test();
+console.log("end");
+❌ Output:
+Uncaught SyntaxError
+
+✅ With try...catch
+function test() {
+  try {
+    let data = JSON.parse("invalid json"); // ❌ error
+    console.log("after parse");
+  } catch (err) {
+    console.log("Error handled");
+  }
+}
+test();
+console.log("end");
+
+✅ Output:
+Error handled
+end
+
+-------------------------Dead Lock ------------------
+when can deadlock happen?
+
+API 1: Dispatch Confirm API
+await Dispatch.findOne({
+  where: { id: 1 },
+  transaction: t,
+  lock: t.LOCK.UPDATE
+});
+
+await BinSlot.findOne({
+  where: { id: 10 },
+  transaction: t,
+  lock: t.LOCK.UPDATE
+});
+await t.commit();
+
+Different Api 2: Bin Adjustment API (running at same time)
+
+await BinSlot.findOne({
+  where: { id: 10 },
+  transaction: t,
+  lock: t.LOCK.UPDATE
+});
+
+await Dispatch.findOne({
+  where: { id: 1 },
+  transaction: t,
+  lock: t.LOCK.UPDATE
+});
+await t.commit();
+
+Now what happens? At the same time:
+API 1:
+Dispatch 🔒
+       |
+       wants
+       ↓
+    BinSlot 🔒
+API 2:
+BinSlot 🔒
+       |
+       wants
+       ↓
+    Dispatch 🔒
+
+
+✅ No deadlock
+Normal:
+T1: Dispatch 🔒
+T2: waiting for Dispatch
+
+
+❌ Deadlock
+T1:
+Dispatch 🔒
+waiting for BinSlot
+
+T2:
+BinSlot 🔒
+waiting for Dispatch

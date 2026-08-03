@@ -1,0 +1,39 @@
+1. what is env variables?
+We use environment variables (.env) to store sensitive information like database passwords, redis keys, and secret tokens instead of hardcoding them in the code.
+This helps in keeping secrets separate from the codebase, so they are not exposed when the code is shared or pushed to repositories like GitHub.
+ It also makes it easy to manage different configurations for different environments like development, testing, and production.
+
+2. what is callback hell?
+When multiple nested call back make code unreadable this is callback hell
+
+3. Why nodejs is single thread?
+Node.js is:
+Single-threaded for JS execution
+but it works like Multi-threaded using (libuv)
+
+Event Loop manages everything
+One thread can:
+Handle 1000s of requests
+Because it's not waiting
+
+Then how Node.js handles multiple requests?
+Because of 3 core things:
+1. 🧠 Event Loop
+2. ⚙️ libuv (background worker threads)
+3. 🚀 Non-blocking (async) I/O
+What happens:
+Step	Action
+1	Request comes
+2	DB call sent to background
+3	Node handles other requests
+4	DB response comes
+5	Response sent
+
+❓ Then why do we even have sync code?
+👉 Because some things MUST be synchronous:
+
+Example:
+let a = 5;
+let b = a + 10;
+👉 This must run step-by-step
+You cannot make everything async

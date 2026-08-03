@@ -1,0 +1,18 @@
+👉 For File Upload (Which package) is used?
+
+“We use packages like multer to upload files in Node.js.”
+
+// code
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+app.post('/upload', upload.single('file'), (req, res) => {
+res.send('File uploaded');
+});
+
+👉 Does it store in database?
+ “No, files are usually not stored directly in the database.”
+💡Explanation
+Files (images, videos) → stored in:
+Cloud storage (AWS S3, etc.)
+Database stores: 👉 file path / URL only
+“The server returns the file URL, and the frontend uses that URL to display the image.”

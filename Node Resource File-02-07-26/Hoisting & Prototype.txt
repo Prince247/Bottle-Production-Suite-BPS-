@@ -1,0 +1,53 @@
+✔️. Hoisting - defination
+
+Hoisting is a JavaScript behavior where variable and function declarations are moved to the top of their scope during the creation phase, 
+before code execution. In case of var, the variable is hoisted and initialized with undefined.
+In case of let and const, they are also hoisted but not initialized, so they stay in the Temporal Dead Zone until their declaration line.
+Function declarations are fully hoisted, which is why we can call them before they are defined in the code.
+Also, when accessing a variable, JavaScript first checks the current scope, and if not found, it looks into the outer scope (this is called scope chain).
+
+✔️. Arrow functions Defination
+Arrow functions cannot be called before initialization because they are treated like variables (let/const), 
+not like function declarations.
+
+Code is u write & internally how it checked
+sayHi(); // ❓ what happens?
+var sayHi = () => {
+  console.log("Hi");
+};
+
+Step-by-step internally: of above code 
+var sayHi;   // hoisted and initialized with undefined
+sayHi();     // ❌ calling undefined → error
+sayHi = () => {
+  console.log("Hi");
+};
+
+
+
+Any block-scoped value before its declaration (let, const, class) — accessing it throws ReferenceError
+
+i) foo(); // "Hello"
+function foo() {
+  console.log("Hello");
+}
+
+ii) foo(); // undefined
+function foo() {             
+  console.log(a);
+  var a = 2
+} -> but in execution phase js looks like 
+function foo() {   
+ var a;          
+  console.log(a);
+  a = 2
+} 
+iii) 
+console.log(a); // undefined
+var a = 2;
+
+
+Difference between normal & arrow function
+Function declarations are fully hoisted, so we can call them before definition.
+But arrow functions are actually function expressions stored in variables (usually const), and 
+due to the Temporal Dead Zone, they cannot be accessed before initialization.

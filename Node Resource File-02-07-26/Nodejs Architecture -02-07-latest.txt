@@ -1,0 +1,120 @@
+Node.js is a runtime environment and it is single-threaded.
+It is built on V8 and libuv.
+
+V8 use for convert js code to machine code.
+
+✔️ Important point of execution of nodejs
+Worker threads are used manually when we have CPU-intensive tasks that would block the event loop, 
+while I/O tasks are automatically handled by libuv.
+-----------------------------------------------------------------------------------------------
+for Async execution Without Worker Thread using below uses libuv (thread Pool)(default size 4).can be increased up to 128 using the UV_THREADPOOL_SIZE environment.
+for execution Task is I/O (file, DB, API) Node uses libuv
+Request → Call Stack → async task sent to libuv → libuv does work → callback goes to queue → event loop checks 
+→ pushes to call stack → executes → response sent
+-----------------------------------------------------------------------------------------------
+for workerThread Task like Heavy Cpu task example large loops, image proces, or video proce, Data parsing (huge JSON)
+we create them manually when needed. Number of worker threads ≈ number of CPU cores
+Call Stack → Worker Thread created → worker runs JS separately → result/message → queue → event loop 
+→ call stack → response
+
+app.get("/heavy", (req, res) => {
+  const worker = new Worker('./worker.js');
+
+  worker.on('message', () => {
+    res.send("done");
+  });
+});
+----------------------------------------------------------------------------------------------------
+
+✔️ Node.js can handle multiple requests using non-blocking I/O.
+After synchronous code execution:
+- process.nextTick runs first
+- then Promise microtasks run
+- then macrotasks like setTimeout, setImmediate, setInterval
+
+
+✔️ Libuv provides the event loop and a thread pool.
+
+to handle Blocking operations like file system, crypto (password hashing), DNS, and compression
+Nodejs use libuv’s thread pool to complete the task 
+libuv = engine behind Node.js async behavior, 
+Do we execute libuv manually?
+❌ No — you never call libuv directly
+👉 Node.js automatically uses it when you write async code.
+
+Node.js uses libuv internally to handle blocking operations like file system, crypto, DNS, and compression. 
+These tasks are offloaded to a thread pool (default size 4). Once completed, the result is placed in a queue, 
+and the event loop pushes it to the call stack where JavaScript executes the callback. Developers don’t use libuv directly — 
+Node handles it automatically.can be increased up to 128 using the UV_THREADPOOL_SIZE environment.
+
+
+
+✔️ The event loop continuously checks if the call stack is empty if empty it moves tasks from queues to the call stack for execution.
+setTimeout runs after a minimum delay,
+setImmediate runs in the check phase,
+setInterval runs repeatedly at a given interval.
+
+Inside I/O (like fs), setImmediate may execute before setTimeout,
+but outside I/O, the order is not guaranteed.
+Microtasks and macrotasks they are executed in the call stack.
+
+
+✔️ EventEmitter is a JavaScript event system and runs in the call stack.
+This makes Node.js efficient and non-blocking.
+
+✔️. Hoisting Definition
+Hoisting means variables and functions are moved to the top of their scope before execution.
+
+✔️. Types of Scope (var / let / const)
+Global
+Function
+Block
+
+var = office-wide access 
+let/const = room-specific access
+
+function test() {
+  if (true) {
+    var a = 10;
+    let b = 20;
+    const c = 30;
+  }
+
+  console.log(a); // ✅ 10
+  console.log(b); // ❌ error
+  console.log(c); // ❌ error
+}
+
+✔️ A closure Defination & Code 
+Closure is a function that remembers variables from its outer scope even after the outer function has finished execution. 
+So, closure helps in maintaining private data and allows controlled access, just like a real bank system.
+example - In a bank account, the actual balance is not directly accessible from outside. 
+You cannot just go and modify the balance manually. Instead, the bank provides methods like 
+deposit and withdraw to interact with it.
+
+function createAccount() {
+let balance = 0; // private variable
+
+function deposit(amount) {
+balance = balance + amount;
+console.log("After deposit:", balance);
+}
+
+function withdraw(amount) {
+balance = balance - amount;
+console.log("After withdraw:", balance);
+}
+
+// returning functions
+return {
+deposit: deposit,
+withdraw: withdraw
+};
+}
+
+// create account
+const account = createAccount();
+
+// use it
+account.deposit(100);   // After deposit: 100
+account.withdraw(30);   // After withdraw: 70

@@ -1,0 +1,30 @@
+how u optmised ur api interview quest
+
+1. added attributes, whereclause ,avoid query in loop , bulk create , pagination where needed 
+and used indexing on frequently queried columns to further optimize query performance.
+
+2. These APIs usually return the same or similar data repeatedly.
+To optimize such APIs, I used Redis caching. Instead of hitting the database every time, 
+I stored the API response in Redis. On subsequent requests, the data is fetched directly from Redis, which is much faster than querying the database.
+we do for the api which is mostly where less data get update or create  
+
+3. denomalization did bcoz multiple joins instead of using 
+Storing data in a way that reduces joins
+👉 Combining related data into one table
+
+Example: ✔ Faster reads
+Instead of joining orders + customers every time
+You store customer_name inside orders table itself
+
+
+when multiple user hit same request duplicate data created so added ovn & added lock 
+
+4. 504 comes when user hit request response are not in the timeframe
+
+5. one api was taking time so i split it in 2 due this it will not time out bcoz time is splitted in 2 time is divided in 2 and another benifit is User don't know apis
+what here happen is 1 api will give listing response now for user listing is came but in 2nd api it giving short colour it will load after above, 
+so now become user friendly and not timeout and easy user think it will inetrnet is slow
+
+6. how bulkupdate we do in postgres we don't have so we do bulkCreate  like below
+let bulkUpdateRes = await db.WoProductionCycleVersion.bulkCreate(bulkUpdateDataArr, { transaction: txnCtx, updateOnDuplicate: ["work_order_id", "production_cycle_version_id", "wo_planned_qty", "wo_sequence", "planned_hr", "wo_fulfilment_date", "change_status", "updated_by"], });
+      

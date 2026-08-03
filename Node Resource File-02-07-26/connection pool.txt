@@ -1,0 +1,60 @@
+👉 How Node.js Connects to PostgreSQL?
+“We connect Node.js to PostgreSQL using ORMs like Sequelize.but we can directly connect without it using ORM that is client module from pg
+ 
+👉 How connection pool help in performance of app?
+ 
+Scenario
+👉 Without Connection Pool
+100 users send requests at the same time
+For each request → new DB connection is created
+Creating connection takes time ❌
+Database gets overloaded ❌
+Without connection pool → 100 requests = 100 separate DB connections (almost at same time)
+Each incoming request does:
+connect to DB → run query → close connection
+👉 With Connection Pool
+Suppose pool size = 10 connections
+100 users send requests
+First 10 → get connection immediately
+Next 90 → wait in queue
+Req1 finishes → connection returned
+Req11 uses that connection
+Req2 finishes → connection returned
+Req12 uses that connection
+
+
+//code we create sequelize file and add this  Using orm
+npm install sequelize pg pg-hstore
+const { Sequelize } = require('sequelize');
+ 
+const sequelize = new Sequelize('db_name', 'username', 'password', {
+host: 'localhost',
+dialect: 'postgres',
+pool: {
+max: 10, // maximum connections
+min: 0, // minimum connections
+acquire: 30000, // max time to get connection
+idle: 10000 // max idle time
+}
+});
+sequelize.authenticate()
+.then(() => console.log('Connected'))
+.catch(err => console.error(err));
+
+//code just normal connection without ORMs 
+const { Client } = require('pg'); 
+const client = new Client({
+user: 'postgres',
+host: 'localhost',
+database: 'testdb',
+password: 'password',
+port: 5432,
+});
+ 
+client.connect();
+ 
+client.query('SELECT * FROM users', (err, res) => {
+if (err) console.error(err);
+else console.log(res.rows);
+client.end();
+});

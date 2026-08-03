@@ -1,0 +1,11 @@
+What is Middleware?
+-> When a Request comes if we implemented Middleware then that request go inside of the middleware if it satisfied middleware
+condition then it will passed to next step else it will be returned.
+
+Example - JWT validation is typically implemented in middleware. Middleware intercepts incoming requests, 
+extracts the token from headers, verifies it, and if valid, allows the request to proceed using next(). 
+If invalid, it returns a 401 Unauthorized response. However, JWT validation is applied only to protected routes,
+not public APIs like login or registration.”
+
+Without middleware → you must write token validation inside every protected API
+✅ With middleware → you write it once and reuse it across routes 

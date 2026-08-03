@@ -1,0 +1,19 @@
+👉 What is different between promise and async await?
+Promises and async/await are used to handle asynchronous operations.”
+“A Promise returns a result in the future and is handled using .then() and .catch().”
+
+“Async/await is built on top of Promises,
+Even though it looks like synchronous code, it still returns the result later because async functions always return a Promise
+
+👉 What is a Module in Node.js?
+In Node.js, a module is a reusable block of code. Every file is treated as a module.”
+“We use require() to import modules and module.exports or exports to export functionality.”
+
+👉 What is NPM?
+NPM is a tool used to install,share external libraries or packages in a Node.js project.”
+“It also helps manage project dependencies using the package.json file.”
+
+👉 Can we write code without using express or nestjs or any framework ?
+Yes we can write backend code in nodejs without using framework, by using Node.js core 
+modules like http, but frameworks like Express or NestJS by providing structure, routing, 
+middleware support, and better code organize code it makes easier

@@ -1,0 +1,156 @@
+🧠 Cluster is used to scale Node.js applications across multiple CPU cores by creating child processes that share the same server port
+🧠 Load balancer gives horizontal scaling, cluster gives vertical scaling. Both together give optimal performance
+Horizontal Scaling = Increase number of machines (servers) means ec2 
+Vertical Scaling   = Increase power within one machine (CPU usage)
+
+🟢 Scenario
+100 requests
+3 EC2 instances
+Each EC2 = 4 CPU cores
+AWS Load Balancer present
+
+CASE 1: ❌ WITHOUT Cluster
+🧠 What happens?
+Load Balancer → distributes 100 requests
+EC2-1 → 33 req
+EC2-2 → 33 req
+EC2-3 → 34 req
+
+👉 But inside each EC2:
+Only 1 Node.js process (single thread)
+→ Only 1 CPU core used ❌
+→ 3 cores idle 😴
+⚠️ Result
+Each server handles requests slowly
+
+👉 Example (approx):
+33 requests per server handled one-by-one
+→ slower response time
+
+🟢 CASE 2: ✅ WITH Cluster
+What happens?
+Load Balancer → same distribution
+EC2-1 → 33 req
+EC2-2 → 33 req
+EC2-3 → 34 req
+
+👉 BUT inside each EC2:
+Cluster creates 4 workers process (4 cores) means using fork() -> worker are created
+🔥 Inside EC2-1
+33 requests
+↓
+Worker 1 → ~8
+Worker 2 → ~8
+Worker 3 → ~8
+Worker 4 → ~9
+
+👉 Parallel processing ✅
+
+
+❌ Without Cluster
+3 servers × 1 worker = 3 workers total
+→ Low parallelism
+→ Slower
+✅ With Cluster
+3 servers × 4 workers = 12 workers total
+→ High parallelism
+→ Faster 🚀
+
+Load Balancer distributes BETWEEN servers
+Cluster distributes WITHIN server
+
+🧠 Code --
+const cluster = require('cluster');
+const os = require('os');
+const http = require('http');
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master running on PID: ${process.pid}`);
+  // create process
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+} else {
+  // process
+  http.createServer((req, res) => {
+    res.end(`Handled by worker ${process.pid}`);
+  }).listen(3000);
+
+  console.log(`Worker started: ${process.pid}`);
+}
+
+
+🟡 In deep of the worker thread & thread pool
+🟡 STEP 1: Load Balancer
+100 requests
+↓
+EC2-1 → 33
+EC2-2 → 33
+EC2-3 → 34
+
+🔵 STEP 2: Inside EC2 (Cluster)
+Each EC2:
+4 cores → 4 workers
+
+Example EC2-1:
+
+33 requests
+↓
+Worker-1 → 8
+Worker-2 → 8
+Worker-3 → 8
+Worker-4 → 9
+
+🟣 STEP 3: Split Work Type (IMPORTANT)
+Inside each worker:
+
+~50% I/O → Thread Pool
+~50% CPU → Worker Threads
+
+Example: Worker-1 (8 requests)
+
+Thread Pool (I/O) → 4 requests
+Worker Threads (CPU) → 4 requests
+
+⚙️ STEP 4: THREAD POOL BEHAVIOUR (I/O TASKS)
+Thread pool size = 4
+4 requests → run immediately
+extra → queue (if any)
+
+👉 These are:
+DB calls
+API calls
+file reads
+💡 They are mostly non-blocking, so Node is efficient here
+
+🔥 STEP 5: WORKER THREAD BEHAVIOUR (CPU TASKS)
+Worker threads created for CPU-heavy work
+
+Example:
+
+4 CPU requests
+↓
+4 worker threads spawned
+↓
+Run in parallel (on cores)
+
+👉 These are:
+image processing
+encryption
+heavy calculations
+
+⚡ STEP 6: CPU CORE REALITY
+
+Each EC2:
+4 cores = 4 true parallel executions
+
+BUT:
+
+Inside 1 EC2:
+4 cluster workers already using 4 cores
+
+👉 So:
+
+Worker threads compete for CPU

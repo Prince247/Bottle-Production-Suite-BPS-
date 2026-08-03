@@ -1,0 +1,38 @@
+Streams & Buffer ?
+Instead of reading the entire file at once, streams process data chunk by chunk. 
+Each chunk is temporarily stored in a buffer, and the writable stream writes those chunks to the destination.
+
+📄 Example: Read file using Stream
+const fs = require('fs');
+
+const readStream = fs.createReadStream('input.txt');
+const writeStream = fs.createWriteStream('output.txt');
+
+readStream.pipe(writeStream);
+
+-If u want then check example else leave it.
+Where is Buffer here?
+input.txt
+   ↓
+readStream reads small chunk (e.g. 64KB)
+   ↓
+That chunk is stored in a Buffer  ✅
+   ↓
+pipe() sends that Buffer
+   ↓
+writeStream writes it to output.txt
+   ↓
+repeat until file ends
+
+
+
+🟢 2. app Crashed due to  Uncaught Error (VERY IMPORTANT 🔥)
+📍 Where to write this? 👉 At the very top of your main file - // index.js or server.js (ENTRY FILE)
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1); // recommended
+});
+
+
+We exit because the app may be in a broken or inconsistent state, if we don't exit then It keeps running it ends in to 
+Some operations half-done can be Unexpected bugs later real danger is App is alive → but unreliable state 

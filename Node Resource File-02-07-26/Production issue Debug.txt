@@ -1,0 +1,29 @@
+✅ Issue 
+
+We faced an issue where the same order was despatched twice due to concurrent requests — either from multiple users or retries.
+Two API calls were processed in parallel, leading to duplicate dispatch, which caused inventory mismatch and financial issues.
+While debugging, we found the same order ID being updated within milliseconds, and the root cause was lack of concurrency control.
+To fix this, we implemented locking using database transactions, and also added optimistic locking with Object Version Number. 
+Additionally, we introduced idempotency checks to ensure repeated requests do not cause duplicate processing.
+This completely resolved the issue and ensured data consistency.”
+
+✅ Locking ALONE is not enough in real systems
+Lock → handles parallel requests
+Idempotency → handles retries / duplicate calls
+
+✅ This DB Lock 
+const order = await Order.findOne({
+      where: { id: orderId },
+      transaction: t,
+      lock: t.LOCK.UPDATE  // 🔒 THIS IS THE LOCK
+    });
+
+✅ we have implemented Object Version Number to avoid Race condition
+fe send current ovn & i will check with the findone does its same ovn number if same then proceed else error please refersh wala
+✅ what is idempotency?
+Status Check (Basic)
+if (order.status === 'DISPATCHED') {
+  return 'Already dispatched';
+}
+👉 Prevents duplicate effect
+

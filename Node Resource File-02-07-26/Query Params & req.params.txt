@@ -1,0 +1,8 @@
+Difference between Query Params and Request Params
+Query Params
+👉 Used to send optional data through the URL, usually for filtering, sorting, searching, pagination.
+Example:
+GET /users?page=1&limit=10
+ 
+Request Params (Route Params)
+👉 Used to identify a specific resource and are part of the URL path.

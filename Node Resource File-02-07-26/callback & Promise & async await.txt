@@ -1,0 +1,44 @@
+However, callbacks can lead to callback hell due to nested code. To solve this, 
+Promises were introduced, which provide better readability using .then() and .catch().Further, 
+async/await simplifies Promises by making asynchronous code look like synchronous code, improving readability and maintainability.
+
+👉 Example:
+function greet(cb,name){
+    console.log('Helo ' + name)
+    cb()
+}
+
+function cbf(){
+    console.log('Byee')
+}
+
+greet(cbf,'Tony');
+
+📌Output:
+Helo Tony
+Byee
+
+
+// Callback
+function getUser(callback) {
+  setTimeout(() => {
+    callback(null, { id: 1 });
+  }, 1000);
+}
+
+// Promise
+function getUserPromise() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({ id: 1 });
+    }, 1000);
+  });
+}
+
+// Async/Await
+async function main() {
+  const user = await getUserPromise();
+  console.log(user);
+}
+
+main();

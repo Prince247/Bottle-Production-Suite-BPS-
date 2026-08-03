@@ -1,0 +1,21 @@
+------------- Difference Between Cookies & Local Storage-----------------------------
+ 1. what is Cookies? (Small automatic storage)
+ Cookies are small data stored by browser, but automatically sent to server every request
+📖 Story:
+
+You enter a hotel.
+Reception gives you a wristband (cookie)
+Every time you go anywhere → security sees it automatically
+You don’t need to show it manually.
+Special type:
+HTTP-only cookie → JS can’t access it (more secure)
+
+2. Local Storage (Manual storage)
+👉 Data stored in browser, but NOT sent automatically
+
+📖 Story:
+Hotel gives you a card in your pocket
+You must take it out and show it yourself
+Nobody checks it automatically
+👉 Same in browser:
+JS (your frontend code) must send it

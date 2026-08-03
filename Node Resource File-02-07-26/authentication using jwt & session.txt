@@ -1,0 +1,94 @@
+JWT vs Session
+🟢 JWT (Stateless Meaning - Server does NOT remember server not store ur data)
+
+“In JWT authentication, after login the server issues an access token and a refresh token. 
+The access token is sent in the Authorization header as ‘Bearer token’ for every request and 
+is verified using its signature without a database call using jwt.verify(token, SECRET)
+When the access token expires, the refresh token—usually stored in an HTTP-only cookie—is sent to the server, 
+which validates in database or cache and issues a new access token.”
+ 
+🔵 How it Works?
+Step 1:
+User login 
+✅ Access Token generated (JWT, short expiry) & ✅ Refresh Token generated (random string) & ✅ Refresh token stored in DB
+🔥 Refresh token sent as httpOnly cookie
+✅ Access token sent in response
+2. Frontend stores access tokens from above response in localStorage & Refresh token stores in cookie
+3. Every API uses access token & Backend verifies JWT & If expired → request fails (401)
+4. Frontend calls: fetch("/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data),
+  credentials: "include"   // 🔥 REQUIRED
+}); -> credentials: "include" with this cookie is sent from browser to refresh api -> api code: 
+Backend checks DB, If not found → invalid -> Expired → reject, ✅ Valid → continue 
+5. if valid then Generate New Access Token Backend sends in response of refresh token api 
+6. Frontend updates token with the latest access token now New access token saved
+✅ User continues without login again
+
+Access Token → Local Storage / Memory -> JS (your frontend code) must send it
+Refresh Token → HTTP-only Cookie -> JS can’t access it (more secure)
+
+
+
+
+🟢 Session (Stateful Meaning - Server remembers you Server stores your data)
+
+👉 Code:
+const session = require('express-session');
+app.use(session({
+  secret: 'mySecretKey',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.get('/', (req, res) => {
+  req.session.user = "Prince";
+  res.send("Session set");
+});
+👉 It stores session data on the server, and sends only a session ID (cookie) to the client.
+
+
+
+👉 Without session or JWT:
+Request 1 → login required
+Request 2 → login again
+Request 3 → login again
+
+👉 Authentication methods like Session or JWT are used so that user doesn’t need to login on every request. 
+They maintain user identity across requests.
+
+ 
+👉How Redis is used with Session in Production?
+Without Redis:
+User Login
+    ↓
+Server creates session
+    ↓
+Session stored in server memory
+    ↓
+User sends request with session ID
+    ↓
+Same server finds session
+
+Problem:
+If you have multiple servers, another server may not have that session data.
+Server restart can remove sessions.
+
+With Redis:
+User Login
+    ↓
+Server creates session
+    ↓
+Session data stored in Redis
+    ↓
+Session ID sent to browser (cookie)
+    ↓
+Any server can check Redis using session ID
+Benefits:
+Shared session storage across multiple servers
+Faster access because Redis stores data in memory
+Session survives server restarts
+
+
+

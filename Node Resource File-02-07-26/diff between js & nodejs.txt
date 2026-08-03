@@ -1,0 +1,11 @@
+👉 Different between nodejs and javascript?
+-> JavaScript is a programming language used to create dynamic behavior, mainly in browsers. 
+Node.js is a runtime environment that allows JavaScript to run outside the browser, such as on servers for backend development.”
+Node.js uses the V8 engine, which compiles JavaScript code into machine code for fast execution
+ 
+Node.js uses a single-threaded, event-driven architecture
+
+
+👉 What all api functions does nodejs use ?
+Node.js provides built-in modules like fs, http, path, os, events, and streams to perform backend operations.
+These APIs support both synchronous and asynchronous execution, with async being preferred for non-blocking performance

@@ -1,0 +1,164 @@
+how system runs
+
+CORS allows frontend and backend on different domains to communicate.
+
+When frontend runs on port 3000 and backend on 3020, they are different origins, so CORS is triggered.
+Browser sends a preflight OPTIONS request to check if the backend allows this origin.
+In the backend, we configure CORS to allow http://localhost:3000.
+If allowed, the browser proceeds with the actual request.
+CORS is enforced by the browser, and controlled by backend headers.
+
+
+--
+if fe & api runs in same ports then
+Same origin → no security issue → no CORS needed"
+
+So:
+❌ No preflight
+❌ No CORS headers required
+✅ Direct request works
+---
+If it "does not work" even on same port
+Then issue is NOT CORS. It could be:
+Wrong API URL
+Server not running
+Routing issue (/api not defined)
+Proxy not configured
+
+-----
+Scenario:
+
+FE → http://localhost:3000
+API → http://localhost:3020
+
+Backend config:
+
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+
+👉 Flow:
+
+Browser sends request with Origin: http://localhost:3000
+Backend checks allowed origins
+
+Backend responds:
+Access-Control-Allow-Origin: http://localhost:3000
+Browser allows request ✅
+
+---
+
+If NOT added in CORS
+Then:
+Backend won’t send Access-Control-Allow-Origin
+Browser blocks request ❌
+Error:
+CORS policy: No 'Access-Control-Allow-Origin' header
+
+Fe & Api They don’t “connect” like cables — Frontend and backend connect through API endpoints (URLs) using HTTP requests, and tools 
+like Axios/Fetch help send those requests.
+✅ Axios Or Fetch 
+Axios and Fetch are used in the frontend to communicate with the backend API.
+React App
+    |
+    | Axios / Fetch
+    |
+Node.js API
+    |
+PostgreSQL
+
+
+Optimizations 👉  please refer Optimizations file in this folder
+1. I used Attributes in Sequelize to fetch only required columns instead of full table data, which reduced payload size and improved performance
+1. Splitting Heavy API,not major time reduced, But it improves user experience and UI gets faster response initially
+2. Pagination - means fetching data in parts instead of all at once, Faster API
+Instead of 10,000 rows
+Send 50 per request 
+👉 OFFSET means:skip first N rows, then take LIMIT
+LIMIT 50 OFFSET 0 -> OFFSET 0 → skip none → start from 1
+LIMIT 50 OFFSET 50 -> OFFSET 50 → skip first 50 → start from 51
+3. Indexing - Improves SELECT performance, Slightly slows INSERT/UPDATE
+4. Views vs Materialized Views
+✅ View:
+Just a saved query
+Runs every time → slower
+“View does not store data, it executes query each time.”
+✅ Materialized View: Materialized view stores data physically in the database, unlike normal views.
+Stores actual data (like table)
+Faster reads
+REFRESH MATERIALIZED VIEW view_name;
+5. Does EventEmitter run in:
+thread? ❌
+microtask? ❌
+macrotask? ❌
+worker thread? ❌
+thread pool? ❌
+✅ Correct Answer:
+
+6.EventEmitter runs synchronously in the main thread.
+When you do:
+emitter.emit('event');
+Immediately calls all listeners
+Runs in same call stack
+Blocks execution if listener is heavy
+
+
+
+Node Working
+Node.js is single-threaded (main thread)
+Uses Event Loop to handle async tasks
+Execution:
+Sync code → runs first
+Microtasks → (Promises)
+Macrotasks → (setTimeout, I/O)
+
+👉 Order:
+
+Call stack
+Microtask queue (Promises)
+Macrotask queue
+Thread / Thread Pool:
+Heavy work (DB, file, crypto) → handled by thread pool (libuv)
+Not blocking main thread
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+29-monday team call change
+
+xero ka salesorder change hai - due date nhi bhja hai wo xero se lena hai
+denormalisation - till orderline changes done means added orderline id in bincontentallocation 
+for line level need will add line id in orderlineid in bincontentallocation
+new data changes -> 
+po status - po -> pol all lines received -> then header will be closed
+po header is cancelled -> all lines which also be cancelled
+and line status we have to add 3 status and mrp se pull krna hoga 
+
+what i need to do on denormalisation monday
+bincontent add new column - alloc_qty , consume_qty
+ek function banayega - bincontent update krega & line level me update krna hai new nahi hai tho create krege
+
+despatch me issue to despatch - here consume_qty me jaate 
+in work order -> tab production me horha - here consume
+
+so rest of pcwo transfer picklist me consume qty column nhi aayega
+
+make migration for all line level added consume_qty & alloc_qty
+
+need to check if we need to pass flag for the function it work or not stock allocation,stock move,stock adjustment,
+
+
