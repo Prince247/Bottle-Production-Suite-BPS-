@@ -7,15 +7,15 @@
 /*
 function withdraw(){
     let balance = 100;
-    return function transaction(){
+    return function txntc(){
         balance -=10;
-        console.log(balance);
+        return balance
     }
+    
 }
-
-let abc = withdraw();
-abc(); //90
-abc(); //80
+let txn = withdraw();
+console.log(txn());
+console.log(txn());
 */
 
 
