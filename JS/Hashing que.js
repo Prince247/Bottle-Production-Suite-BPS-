@@ -16,10 +16,10 @@ console.log(results);
 
 /* Optimal
 let hashNum = [10,1,2,10,2,1,15];
-let results={};
-for(let i of hashNum){
-    results[i]=(results[i] || 0) + 1;
-}
+let hashKey ={}
 
-console.log(results);
+for(let i of hashNum){
+    hashKey[i] = (hashKey[i] || 0) + 1;
+}
+console.log(hashKey);
 */
