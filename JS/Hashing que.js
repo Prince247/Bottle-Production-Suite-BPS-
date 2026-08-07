@@ -23,3 +23,14 @@ for(let i of hashNum){
 }
 console.log(hashKey);
 */
+let hashNum = [10,1,2,10,2,1,15];
+let fetchDetails={}
+
+for(let i of hashNum){
+    fetchDetails[i] = (fetchDetails[i] || 0) + 1
+    if(fetchDetails[i]>1){
+        console.log(i);
+        break;
+    }
+}
+console.log(fetchDetails);
