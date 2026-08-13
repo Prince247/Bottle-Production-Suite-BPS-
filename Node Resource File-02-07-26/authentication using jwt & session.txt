@@ -2,9 +2,9 @@ JWT vs Session
 🟢 JWT (Stateless Meaning - Server does NOT remember server not store ur data)
 
 “In JWT authentication, after login the server issues an access token and a refresh token. 
-The access token is sent in the Authorization header as ‘Bearer token’ for every request and 
+if u want to protect an api we have to add authentication for that api The access token is sent in the Authorization header as ‘Bearer token’ for the request and 
 is verified using its signature without a database call using jwt.verify(token, SECRET)
-When the access token expires, the refresh token—usually stored in an HTTP-only cookie—is sent to the server, 
+When the access token expires without logging out the user system calls the refresh api and the refresh token—usually stored in an HTTP-only cookie—is sent to the server, 
 which validates in database or cache and issues a new access token.”
  
 🔵 How it Works?
