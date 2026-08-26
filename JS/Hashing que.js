@@ -160,6 +160,18 @@ for(let i of numbers){
 }
 console.log(hasDuplicate);
 
+//3. Remove duplicate from sorted Array
+
+let numbers = [1,1,2,2,3,4,5,6,7,9];
+let j=0
+for(let i=1;i<numbers.length;i++){
+    if(numbers[j]!=numbers[i]){
+        j++
+        numbers[j]=numbers[i]
+    }
+}
+numbers.length=j+1
+console.log(numbers)
 
 
 */
