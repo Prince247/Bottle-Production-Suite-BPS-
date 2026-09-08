@@ -1,6 +1,6 @@
 - Means u can Refer x Means Don't Refer
 ✔️ Very short interview version
-Node.js is single-threaded for JavaScript execution, but internally it uses libuv, the OS, and a thread pool for certain operations, 
+Node.js is single-threaded for JavaScript execution, but internally it uses libuv, thread pool for certain operations, 
 allowing it to handle multiple requests concurrently without blocking the main JavaScript thread.
 
 
@@ -8,30 +8,47 @@ allowing it to handle multiple requests concurrently without blocking the main J
 -> Node.js is a JavaScript runtime that uses the V8 engine to execute JavaScript code. 
 When a request comes to a Node.js server, If the code is a normal synchronous operation, V8 executes it directly on the Call Stack. once 
 it done 2nd priority is Process.nextTick() But if the code performs an asynchronous operation such as reading a file system, doing certain cryptographic work, compression, or some DNS operations, 
-Node.js uses libuv to handle that operation without blocking the main JS thread. Depending on the operation, 
-libuv usess Thread Pool. The Thread Pool has a default size of 4 threads and can be increased using UV_THREADPOOL_SIZE up to 128. 
+Node.js uses libuv to handle that operation without blocking the main JS thread.
+libuv uses Thread Pool. The Thread Pool has a default size of 4 threads and can be increased using UV_THREADPOOL_SIZE up to 128. 
 While that asynchronous operation is running, Node.js can continue executing other JavaScript code instead of waiting for it. 
 Once the asynchronous operation finishes, its callback is made ready to be executed and is placed into the appropriate queue. 
 This is where the Event Loop becomes important: the Event Loop continuously checks whether the Call Stack is empty
 When the Call Stack is empty, it takes micro & macro task execute through V8. This is how Node.js can handle many concurrent requests even though JavaScript itself runs on a single main thread.
 
-Cook = libuv does the actual work, like preparing the food.
-Food = completed async operation.
-Waiter = Event Loop → checks when the food/work is ready and takes it to the customer.
-Customer's table = Call Stack → where the work is actually being handled.
-V8 = JavaScript executor → actually executes the JavaScript function.
+Head Chef = Libuv
+    ↓
+Distributes/coordinates certain work
+    ↓
+Cooks = Thread Pool worker threads
+    ↓
+Actually perform the blocking task
+    ↓
+Food = Completed async operation
+    ↓
+Waiter = Event Loop
+    ↓
+Takes the completed callback toward execution
+    ↓
+Customer's table = Call Stack
+    ↓
+V8 = Actually executes the JavaScript callback
 
 process.nextTick() puts the function into Node's special nextTick queue. 
 After the current synchronous execution finishes, Node processes that queue, and the function is then executed by V8 on the Call Stack.
 
 -----------------------Execution of Macro Task----------------------
-setTimeout runs after a minimum delay,
-setImmediate runs in the check phase,
-setInterval runs repeatedly at a given interval.
+setTimeout -> Used when you want to execute something after a minimum delay
+setImmediate -> So setImmediate() is particularly useful when you're inside an I/O callback and want something to happen right after that I/O callback finishes.
+setInterval -> Used when you want something to execute repeatedly. if u want to stop it use clearInterval
+const timer = setInterval(() => {
+    console.log('100');
+}, 100);
 
-Inside I/O (like fs), setImmediate may execute before setTimeout,
+clearInterval(timer);
+
+-> Execution steps of setImmediate,setTimeout,setInterval
+When you're inside an I/O callback, setImmediate() generally runs before setTimeout(..., 0).
 but outside I/O, the order is not guaranteed.
-Microtasks and macrotasks they are executed in the call stack.
 
 --------------------- Worker Thread Task execution way-----------------------------
 ✔️ Important point of execution of nodejs
@@ -40,7 +57,7 @@ while I/O tasks are automatically handled by libuv.
 
 for workerThread Task like Heavy Cpu task example large loops, image proces, or video proce, Data parsing (huge JSON)
 we create them manually when needed. Number of worker threads ≈ number of CPU cores
-Call Stack → Worker Thread created → worker runs JS separately → result/message → queue → event loop 
+Request → Worker Thread created → worker runs JS separately → result/message → queue → event loop 
 → call stack → response
 
 code -> app.get("/heavy", (req, res) => {
@@ -84,9 +101,46 @@ Do we execute libuv manually?
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 -------------------New below u can refer ---------------------------------------------------
+✔️ EventEmitter is basically a synchronous event mechanism that runs on the main JavaScript thread
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
+emitter.on('hello', () => {
+    console.log('Listener 1');
+});
+emitter.on('hello', () => {
+    console.log('Listener 2');
+});
+emitter.on('hello', () => {
+    console.log('Listener 3');
+});
+emitter.emit('hello');
+console.log('Done');
 
-✔️ EventEmitter is a JavaScript event system and runs in the call stack.
-This makes Node.js efficient and non-blocking.
+Execution is:
+emit('hello')
+      ↓
+Listener 1
+      ↓
+Listener 2
+      ↓
+Listener 3
+      ↓
+Done
+
+When emitter.emit('hello') is executed, all listeners registered for the hello event are executed synchronously, 
+one after another, on the main JavaScript thread. If any listener performs blocking work, it blocks the main thread, 
+so other JavaScript callbacks cannot execute until that work finishes.
+
+----------------------------------------------------------
+emit()
+  ↓
+Call Stack
+  ↓
+Event listener executes
+  ↓
+V8 executes JavaScript
+
+---------------------------------------------------------
 
 ✔️. Hoisting Definition
 Hoisting means variables and functions are moved to the top of their scope before execution.
