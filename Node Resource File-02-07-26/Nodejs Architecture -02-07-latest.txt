@@ -1,3 +1,33 @@
+Topics Covered - Sync & Async Difference, Nodejs Architecture, Set Function, EventEmitter, Closure, Hoisting
+
+In a Node.js interview, you can answer like this:
+Difference Between Synchronous code Vs Asynchronous code
+
+Synchronous code executes one operation at a time and waits for it to finish before moving to the next operation. 
+It can block the execution thread.
+
+Asynchronous code starts an operation and doesn't wait for it to finish. Node.js can continue executing other code and 
+handle the result later using callbacks, promises, or async/await.
+
+---------------------------------------
+example
+Synchronous:
+
+const data = fs.readFileSync('file.txt');
+console.log(data);
+console.log('Done');
+
+Here, Node.js waits for the file to be completely read before printing "Done"
+
+Asynchronous:
+fs.readFile('file.txt', (err, data) => {
+    console.log(data);
+});
+console.log('Done');
+Here, "Done" can print before the file reading finishes.
+
+----------------------------------------------------------
+
 - Means u can Refer x Means Don't Refer
 ✔️ Very short interview version
 Node.js is single-threaded for JavaScript execution, but internally it uses libuv, thread pool for certain operations, 
