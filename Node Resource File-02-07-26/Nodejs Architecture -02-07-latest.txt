@@ -4,9 +4,9 @@ In a Node.js interview, you can answer like this:
 Difference Between Synchronous code Vs Asynchronous code
 
 Synchronous code executes one operation at a time and waits for it to finish before moving to the next operation. 
-It can block the execution thread.
+It blocks the execution thread.
 
-Asynchronous code starts an operation and doesn't wait for it to finish. Node.js can continue executing other code and 
+Asynchronous code starts an operation and doesn't wait for it to finish. Node.js can continue executing other code or operation and 
 handle the result later using callbacks, promises, or async/await.
 
 ---------------------------------------
@@ -35,7 +35,7 @@ allowing it to handle multiple requests concurrently without blocking the main J
 
 
 ✔️ How Nodejs Works?
--> Node.js is a JavaScript runtime that uses the V8 engine to execute JavaScript code. 
+-> Node.js is a runtime that uses the V8 engine to execute JavaScript code. 
 When a request comes to a Node.js server, If the code is a normal synchronous operation, V8 executes it directly on the Call Stack. once 
 it done 2nd priority is Process.nextTick() But if the code performs an asynchronous operation such as reading a file system, doing certain cryptographic work, compression, or some DNS operations, 
 Node.js uses libuv to handle that operation without blocking the main JS thread.
@@ -61,11 +61,53 @@ Takes the completed callback toward execution
     ↓
 Customer's table = Call Stack
     ↓
-V8 = Actually executes the JavaScript callback
+V8 = Actually executes the JavaScript callback & Converts JavaScript into machine code (using bytecode and JIT compilation into machine code)
 
 process.nextTick() puts the function into Node's special nextTick queue. 
-After the current synchronous execution finishes, Node processes that queue, and the function is then executed by V8 on the Call Stack.
+console.log('Start');
+process.nextTick(() => {
+    console.log('Next Tick');
+});
+console.log('End');
+1. V8 executes console.log('Start').
+2. process.nextTick() registers its callback in the Next Tick Queue.
+3. V8 executes console.log('End').
+4. Synchronous execution finishes.
+5. Node.js processes the Next Tick Queue.
+6. V8 executes the nextTick callback.
 
+2. When asynchronous operations are present
+const fs = require('fs');
+
+console.log('Start');
+
+fs.readFile('test.txt', 'utf8', () => {
+    console.log('File Read');
+
+    process.nextTick(() => {
+        console.log('Next Tick');
+    });
+});
+
+setTimeout(() => {
+    process.nextTick(() => {
+        console.log('NextTick callback');
+    });
+    console.log('Timeout');
+}, 0);
+
+process.nextTick(() => {
+    console.log('Next Tick 1');
+});
+console.log('End');
+
+Start
+End
+Next Tick 1
+Timeout
+NextTick callback
+File Read
+Next Tick
 -----------------------Execution of Macro Task----------------------
 setTimeout -> Used when you want to execute something after a minimum delay
 setImmediate -> So setImmediate() is particularly useful when you're inside an I/O callback and want something to happen right after that I/O callback finishes.
