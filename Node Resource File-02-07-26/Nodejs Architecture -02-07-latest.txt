@@ -238,6 +238,9 @@ function test() {
 }
 
 ✔️ A closure Defination & Code 
+// Refer this only ---- Closures are used for data privacy, Where an inner function remembers and has access to variables from its outer function scope
+// even after the outer function has finished execution.
+
 Closure is a function that remembers variables from its outer scope even after the outer function has finished execution. 
 So, closure helps in maintaining private data and allows controlled access, just like a real bank system.
 example - In a bank account, the actual balance is not directly accessible from outside. 

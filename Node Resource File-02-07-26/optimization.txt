@@ -21,4 +21,5 @@ Runs every time → slower
 Stores actual data (like table)
 Faster reads
 REFRESH MATERIALIZED VIEW view_name;
-6. Redis 
+6. Denormalization
+7. Redis 

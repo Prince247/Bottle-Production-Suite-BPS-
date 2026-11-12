@@ -1,5 +1,6 @@
 JWT vs Session
 🟢 JWT (Stateless Meaning - Server does NOT remember server not store ur data)
+The refresh token is only used to obtain a new access token.
 
 “In JWT authentication, after login the server issues an access token and a refresh token. 
 if u want to protect an api we have to add authentication for that api The access token is sent in the Authorization header as ‘Bearer token’ for the request and 
