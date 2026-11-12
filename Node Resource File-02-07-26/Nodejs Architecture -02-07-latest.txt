@@ -237,39 +237,3 @@ function test() {
   console.log(c); // ❌ error
 }
 
-✔️ A closure Defination & Code 
-// Refer this only ---- Closures are used for data privacy, Where an inner function remembers and has access to variables from its outer function scope
-// even after the outer function has finished execution.
-
-Closure is a function that remembers variables from its outer scope even after the outer function has finished execution. 
-So, closure helps in maintaining private data and allows controlled access, just like a real bank system.
-example - In a bank account, the actual balance is not directly accessible from outside. 
-You cannot just go and modify the balance manually. Instead, the bank provides methods like 
-deposit and withdraw to interact with it.
-
-function createAccount() {
-let balance = 0; // private variable
-
-function deposit(amount) {
-balance = balance + amount;
-console.log("After deposit:", balance);
-}
-
-function withdraw(amount) {
-balance = balance - amount;
-console.log("After withdraw:", balance);
-}
-
-// returning functions
-return {
-deposit: deposit,
-withdraw: withdraw
-};
-}
-
-// create account
-const account = createAccount();
-
-// use it
-account.deposit(100);   // After deposit: 100
-account.withdraw(30);   // After withdraw: 70
