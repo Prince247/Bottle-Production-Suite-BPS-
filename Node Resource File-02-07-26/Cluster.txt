@@ -1,7 +1,17 @@
+In Node.js, we use different mechanisms to improve application performance and scalability.
+
+1. Load Balancer: Distributes incoming requests across multiple EC2 instances, preventing one server from handling all the traffic.
+
+2. Cluster: Creates multiple Node.js processes within one EC2 instance to utilize multiple CPU cores instead of relying on a single process.
+
+3. Worker Threads: Handle CPU-intensive tasks like image processing, encryption and heavy calculations without blocking the main event loop.
+
+4. Thread Pool (libuv): Handles certain expensive operations in the background, such as file system operations, cryptographic operations and compression, keeping the event loop responsive.
+
 🧠 Cluster is used to scale Node.js applications across multiple CPU cores by creating child processes that share the same server port
 🧠 Load balancer gives horizontal scaling, cluster gives vertical scaling. Both together give optimal performance
 Horizontal Scaling = Increase number of machines (servers) means ec2 
-Vertical Scaling   = Increase power within one machine (CPU usage)
+Vertical Scaling   = Increase power within one machine (CPU usage), Multi-core CPU utilization, simple cluster use to all the cores
 
 🟢 Scenario
 100 requests
