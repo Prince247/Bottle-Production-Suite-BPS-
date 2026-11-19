@@ -1,3 +1,63 @@
+i. PM2 has two main execution modes: Fork mode and Cluster mode. The PM2 daemon is not a third execution mode. It is the background manager responsible for controlling your applications.
+
+Without PM2:
+- You run node server.js.
+- If the application crashes, you must manually run node server.js again.
+- You manage logs yourself.
+
+With PM2 :
+- PM2 starts your Node.js application.
+- If it crashes, PM2 automatically restarts it.
+- PM2 manages application logs.
+- You can monitor, stop and restart the application.
+- You don't need to manually start it after every crash.
+
+ii. PM2 commands – Quick reference
+Command	Purpose
+pm2 start server.js --name orean	        -       Start in Fork mode (default)
+pm2 start server.js --name orean -i 4	    -       Start Cluster mode with 4 workers
+pm2 start server.js --name orean -i max	  -       Create workers based on available CPU cores
+pm2 start pm2-orean-options.json	        -       Start using your configuration file (like we have in our project)
+pm2 stop orean	                          -       Stop application
+pm2 restart orean	                        -       Restart all application processes
+pm2 reload orean	                        -       Graceful reload (especially useful in Cluster mode)
+pm2 delete orean	                        -       Stop and remove from PM2
+pm2 start orean	                          -       Start a previously stopped application
+pm2 list	                                -       List all applications
+pm2 status	                              -       Check application status
+pm2 logs	                                -       Show all application logs
+
+
+1. Cluster mode: 4 cores and 5 instances
+- PM2 will create 5 worker processes, not 4 CPU cores do not limit you to 4 workers. However, more workers don't necessarily mean better performance.
+
+2. Fork mode: 4 cores and 5 instances
+- 5 processes created, If all five try to listen on port 3040, you get port conflicts.
+- You would normally assign different ports and use Nginx to distribute requests.
+
+One real-world example: What if one process crashes?
+Fork mode:
+- Your single Node.js process crashes.
+- PM2 detects it.
+- PM2 restarts it.
+- During downtime, requests may fail.
+
+Cluster mode:
+- Worker 2 crashes.
+- PM2 detects it and restarts Worker 2.
+- Other workers can continue serving requests.
+- Your application can remain available through the other workers.
+This is one major advantage of Cluster mode.
+
+1. Does Cluster create child processes called Fork?
+No. A child process and Fork mode are not the same thing.
+
+There are two concepts:
+- Fork: A process creation method. PM2 starts your Node.js application as a normal child process. Its same like Node Server.js we usually do for run node application
+- Cluster: Node.js cluster functionality creates multiple worker processes that share a server port.
+
+
+--This Cluster Mode with Ec2 how it works ------------------
 In Node.js, we use different mechanisms to improve application performance and scalability.
 
 1. Load Balancer: Distributes incoming requests across multiple EC2 instances, preventing one server from handling all the traffic.
