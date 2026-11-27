@@ -30,7 +30,7 @@ Here, "Done" can print before the file reading finishes.
 
 - Means u can Refer x Means Don't Refer
 ✔️ Very short interview version
-Node.js is single-threaded for JavaScript execution, but internally it uses libuv, thread pool for certain operations, 
+Node.js is a run time environment & is single-threaded for JavaScript execution, but internally it uses libuv, thread pool for certain operations, 
 allowing it to handle multiple requests concurrently without blocking the main JavaScript thread.
 
 
@@ -140,12 +140,50 @@ code -> app.get("/heavy", (req, res) => {
   });
 });
 
--------------------------Execution Without Worker Thread----------------------------------------------------------
-for Async execution Without Worker Thread using below uses libuv (thread Pool)(default size 4).can be increased up to 128 using the UV_THREADPOOL_SIZE environment.
-for execution Task is I/O (file, DB, API) Node uses libuv
-Request → Call Stack → async task sent to libuv → libuv does work → callback goes to queue → event loop checks 
-→ pushes to call stack  → response sent
------------------------------------------------------------------------------------------------
+-------------------------- Without Worker Thread -------------------------------------------------------
+async function processData() {
+    console.log("Start");
+    // Heavy CPU calculation
+    for (let i = 0; i < 10000000000; i++) {
+        // CPU work
+    }
+    console.log("End");
+}
+processData();
+console.log("Next request");
+Op-
+Start prints.
+Heavy calculation starts and blocks the main thread.
+Calculation finishes.
+End prints.
+Next request prints.
+
+important- 
+1. async does not automatically move CPU work to the libuv thread pool.
+2. JavaScript executes the CPU-intensive loop on the main thread. so it can block the main thread
+- Worker Threads → Used to offload CPU-intensive JavaScript work.
+
+-------------------------About JSON----------------------------------------------------------
+1) JSON.parse() is synchronous and blocks the main thread until parsing finishes, even if the file was read asynchronously using fs.readFile().
+2) JSON parsing happens on a separate thread without blocking the main thread. Once completed, the result is sent through postMessage(), and the main thread handles it through the message event.Main Thread
+Receives message through worker.on('message') Event Loop Message event callback is scheduled as a task (macrotask)
+
+---------------------------------Who use ThreadPool Worker Thread------------------------------------------------------------
+Asynchronous Network I/O means Node.js sends a request over the network and doesn't wait by blocking the main thread for the response.
+
+For example, when you call an API using Axios:
+1. Node.js sends the HTTP request.
+2. It continues executing other tasks instead of waiting.
+3. When the API response arrives, Node.js processes the response through the event loop
+
+HTTP API calls (Fetch, Axios): Neither libuv thread pool nor Worker Threads. They use asynchronous network I/O.
+Database calls (Sequelize, PostgreSQL): Neither. They use asynchronous network I/O.
+File system APIs (fs.readFile): Generally use the libuv thread pool.
+CPU-intensive JavaScript: Main thread by default; use Worker Threads to offload it.
+JSON parsing (JSON.parse): Main thread; synchronous execution.
+Crypto (crypto.pbkdf2): Generally uses the libuv thread pool.
+DNS (dns.lookup): Uses the libuv thread pool.
+Timers (setTimeout): Managed by the event loop, not the thread pool.
 
 
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
